@@ -1,11 +1,16 @@
 package junit5tests;
 
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ParameterizedTests {
 
     @ParameterizedTest(name = "Run: {index} - value: {arguments}")
@@ -62,5 +67,45 @@ public class ParameterizedTests {
                                                    String uom, String provider) {
         System.out.println("name = " + name + ", price = " + price + ", qty = " + qty +
                 ", uom = " + uom + ", provider = " + provider);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "sourceString")
+    void methodSource_String(String param1) {
+        System.out.println("param1 = " + param1);
+    }
+
+    List<String> sourceString() {
+        //processing done here
+        return Arrays.asList("tomato", "carrot", "cabbage");
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "sourceStringAsStream")
+    void methodSource_StringAsStream(String param1) {
+        System.out.println("param1 = " + param1);
+    }
+
+    Stream<String> sourceStringAsStream() {
+        //processing done here
+        return Stream.of("beetroot", "orange", "apple");
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "sourceList_StringDouble")
+    void methodSource_StringDoubleList(String param1, double param2) {
+        System.out.println("param1 = " + param1 + ", param2 = " + param2);
+    }
+
+    List<Arguments> sourceList_StringDouble() {
+        //processing done here
+        return Arrays.asList(arguments("tomato", 2.0),
+                arguments("orange", 2.5), arguments("peach", 7.8));
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "junit5tests.ParamProvider#sourceStream_StringDouble")
+    void methodSource_StringDoubleStream(String param1, double param2) {
+        System.out.println("param1 = " + param1 + ", param2 = " + param2);
     }
 }
